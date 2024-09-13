@@ -27,6 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
+    // 소셜 미디어 공유 기능
+    const twitterShareBtn = document.getElementById('twitter-share');
+    const facebookShareBtn = document.getElementById('facebook-share');
+    const linkedinShareBtn = document.getElementById('linkedin-share');
+
+    const eventTitle = "테크 혁신가 모임";
+    const eventUrl = window.location.href;
+
+    twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(eventTitle)}&url=${encodeURIComponent(eventUrl)}`;
+    facebookShareBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`;
+    linkedinShareBtn.href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventUrl)}&title=${encodeURIComponent(eventTitle)}`;
+
     // 폼 제출 및 유효성 검사
     const form = document.getElementById('registrationForm');
     form.addEventListener('submit', async (e) => {

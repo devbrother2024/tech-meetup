@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from functools import wraps
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = os.urandom(24)
 
 # 이벤트 상세 정보
@@ -67,6 +67,10 @@ def admin_logout():
 @login_required
 def admin_panel():
     return render_template("admin_panel.html", registrations=registrations)
+
+@app.route('/static/<path:path>')
+def serve_static(path):
+    return send_from_directory('static', path)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
