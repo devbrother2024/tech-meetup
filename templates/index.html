@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,25 +17,30 @@
 
         <main class="bg-white shadow-md rounded-lg p-6 mb-8">
             <section class="mb-8">
-                <h2 class="text-2xl font-semibold mb-4">Event Details</h2>
-                <p><strong>Date:</strong> <span id="eventDate"></span></p>
-                <p><strong>Time:</strong> {{ event.time }}</p>
-                <p><strong>Location:</strong> {{ event.location }}</p>
+                <h2 class="text-2xl font-semibold mb-4">이벤트 상세 정보</h2>
+                <p><strong>날짜:</strong> <span id="eventDate"></span></p>
+                <p><strong>시간:</strong> {{ event.time }}</p>
+                <p><strong>장소:</strong> {{ event.location }}</p>
                 <p class="mt-4">{{ event.description }}</p>
             </section>
 
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4">이벤트까지 남은 시간</h2>
+                <div id="countdown" class="text-3xl font-bold text-indigo-600"></div>
+            </section>
+
             <section>
-                <h2 class="text-2xl font-semibold mb-4">Register for the Event</h2>
+                <h2 class="text-2xl font-semibold mb-4">이벤트 등록</h2>
                 <form id="registrationForm" class="space-y-4">
                     <div>
-                        <label for="fullName" class="block mb-1">Full Name</label>
+                        <label for="fullName" class="block mb-1">성명</label>
                         <input type="text" id="fullName" name="fullName" required class="w-full px-3 py-2 border rounded-md">
                     </div>
                     <div>
-                        <label for="email" class="block mb-1">Email</label>
+                        <label for="email" class="block mb-1">이메일</label>
                         <input type="email" id="email" name="email" required class="w-full px-3 py-2 border rounded-md">
                     </div>
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">Register</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">등록</button>
                 </form>
             </section>
         </main>

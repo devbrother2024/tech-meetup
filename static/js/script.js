@@ -1,10 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Format and display the event date
+    // 이벤트 날짜 포맷 및 표시
     const eventDateElement = document.getElementById('eventDate');
-    const eventDate = dayjs('2023-07-15').format('MMMM D, YYYY');
-    eventDateElement.textContent = eventDate;
+    const eventDate = dayjs('2024-09-30');
+    eventDateElement.textContent = eventDate.format('YYYY년 M월 D일');
 
-    // Form submission and validation
+    // 카운트다운 타이머
+    const countdownElement = document.getElementById('countdown');
+    
+    function updateCountdown() {
+        const now = dayjs();
+        const duration = eventDate.diff(now);
+        
+        if (duration > 0) {
+            const days = Math.floor(duration / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((duration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+            
+            countdownElement.textContent = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+        } else {
+            countdownElement.textContent = "이벤트가 시작되었습니다!";
+        }
+    }
+
+    // 1초마다 카운트다운 업데이트
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // 폼 제출 및 유효성 검사
     const form = document.getElementById('registrationForm');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -12,14 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullName = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
 
-        // Validate form inputs
+        // 입력 유효성 검사
         if (!fullName || !email) {
-            showMessage('Please fill in all fields.', 'error');
+            showMessage('모든 필드를 입력해주세요.', 'error');
             return;
         }
 
         if (!validator.isEmail(email)) {
-            showMessage('Please enter a valid email address.', 'error');
+            showMessage('유효한 이메일 주소를 입력해주세요.', 'error');
             return;
         }
 
@@ -41,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMessage(data.message, 'error');
             }
         } catch (error) {
-            showMessage('An error occurred. Please try again later.', 'error');
+            showMessage('오류가 발생했습니다. 나중에 다시 시도해주세요.', 'error');
         }
     });
 
