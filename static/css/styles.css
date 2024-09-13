@@ -1,0 +1,30 @@
+/* Custom styles to complement Tailwind CSS */
+body {
+    background-color: #f3f4f6;
+}
+
+.container {
+    max-width: 800px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.success-message {
+    background-color: #10b981;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+}
+
+.error-message {
+    background-color: #ef4444;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+}
