@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from functools import wraps
 import os
+import psycopg2
+from psycopg2 import sql
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = os.urandom(24)
@@ -14,12 +16,35 @@ event = {
     "description": "최첨단 기술 강연과 업계 리더들과의 네트워킹을 위한 저녁 모임에 참여하세요!"
 }
 
-# 등록 정보를 위한 인메모리 저장소
-registrations = {}
-
 # Admin credentials (in a real-world scenario, use a more secure method)
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "password123"
+
+def get_db_connection():
+    conn = psycopg2.connect(
+        host=os.environ['PGHOST'],
+        database=os.environ['PGDATABASE'],
+        user=os.environ['PGUSER'],
+        password=os.environ['PGPASSWORD'],
+        port=os.environ['PGPORT']
+    )
+    return conn
+
+def create_table():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS registrations (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            full_name VARCHAR(255) NOT NULL
+        )
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+create_table()
 
 def login_required(f):
     @wraps(f)
@@ -40,9 +65,24 @@ def register():
     full_name = data.get("fullName")
 
     if email and full_name:
-        # 인메모리 저장
-        registrations[email] = full_name
-        return jsonify({"success": True, "message": "등록이 성공적으로 완료되었습니다!"}), 200
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("INSERT INTO registrations (email, full_name) VALUES (%s, %s)", (email, full_name))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return jsonify({"success": True, "message": "등록이 성공적으로 완료되었습니다!"}), 200
+        except psycopg2.IntegrityError:
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return jsonify({"success": False, "message": "이미 등록된 이메일입니다."}), 400
+        except Exception as e:
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return jsonify({"success": False, "message": "등록 중 오류가 발생했습니다."}), 500
     else:
         return jsonify({"success": False, "message": "유효하지 않은 데이터가 제공되었습니다."}), 400
 
@@ -66,6 +106,12 @@ def admin_logout():
 @app.route("/admin")
 @login_required
 def admin_panel():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT email, full_name FROM registrations")
+    registrations = cur.fetchall()
+    cur.close()
+    conn.close()
     return render_template("admin_panel.html", registrations=registrations)
 
 @app.route('/static/<path:path>')
